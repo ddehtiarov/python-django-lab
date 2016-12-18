@@ -1,10 +1,9 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
-from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
-
-from .forms import PostForm, UserForm
+from django.db.models import Q
+from .forms import PostForm, PhotoForm, UserForm
 from .models import Post, Photo
 
 IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
@@ -18,16 +17,16 @@ def create_post(request):
         if form.is_valid():
             post = form.save(commit=False)
             post.user = request.user
-            # post.Post_logo = request.FILES['Post_logo']
-            # file_type = Post.post_logo.url.split('.')[-1]
+            # post.post_logo = request.FILES['post_logo']
+            # file_type = post.post_logo.url.split('.')[-1]
             # file_type = file_type.lower()
             # if file_type not in IMAGE_FILE_TYPES:
             #     context = {
-            #         'Post': Post,
+            #         'post': post,
             #         'form': form,
             #         'error_message': 'Image file must be PNG, JPG, or JPEG',
             #     }
-            #     return render(request, 'whayp/create_Post.html', context)
+            #     return render(request, 'whayp/create_post.html', context)
             post.save()
             return render(request, 'whayp/detail.html', {'post': post})
         context = {
@@ -83,11 +82,11 @@ def index(request):
         query = request.GET.get("q")
         if query:
             posts = posts.filter(
-                Q(Post_title__icontains=query) |
+                Q(post_title__icontains=query) |
                 Q(artist__icontains=query)
             ).distinct()
             photo_results = photo_results.filter(
-                Q(Photo_title__icontains=query)
+                Q(photo_title__icontains=query)
             ).distinct()
             return render(request, 'whayp/index.html', {
                 'posts': posts,
@@ -114,8 +113,8 @@ def login_user(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                Posts = Post.objects.filter(user=request.user)
-                return render(request, 'whayp/index.html', {'Posts': Posts})
+                posts = Post.objects.filter(user=request.user)
+                return render(request, 'whayp/index.html', {'posts': posts})
             else:
                 return render(request, 'whayp/login.html', {'error_message': 'Your account has been disabled'})
         else:
@@ -157,7 +156,7 @@ def photos(request, filter_by):
                 users_photos = users_photos.filter(is_favorite=True)
         except Post.DoesNotExist:
             users_photos = []
-        return render(request, 'whayp/Photos.html', {
+        return render(request, 'whayp/photos.html', {
             'photo_list': users_photos,
             'filter_by': filter_by,
         })

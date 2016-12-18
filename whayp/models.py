@@ -1,3 +1,4 @@
+import datetime
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
@@ -22,11 +23,11 @@ from django.dispatch import receiver
 class Post(models.Model):
     user = models.ForeignKey(User, default=1)
     description = models.CharField(max_length=250)
-    date = models.DateField()
+    date = models.DateTimeField(default=datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
     is_favorite = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.user.login + ': ' + self.description + ' - ' + self.date
+        return self.description + ' - ' + self.date
 
 
 class Photo(models.Model):
