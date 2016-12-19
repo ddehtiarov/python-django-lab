@@ -1,10 +1,15 @@
+import uuid
+
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
-from django.db.models import Q
-from .forms import PostForm, PhotoForm, UserForm
+
+from .forms import PostForm, UserForm
 from .models import Post, Photo
+
+EXT = '.jpg'
 
 IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
 
@@ -13,26 +18,41 @@ def create_post(request):
     if not request.user.is_authenticated():
         return render(request, 'whayp/login.html')
     else:
-        form = PostForm(request.POST or None, request.FILES or None)
-        if form.is_valid():
+        form = PostForm(request.POST)
+        if request.POST:
             post = form.save(commit=False)
-            post.user = request.user
-            # post.post_logo = request.FILES['post_logo']
-            # file_type = post.post_logo.url.split('.')[-1]
-            # file_type = file_type.lower()
-            # if file_type not in IMAGE_FILE_TYPES:
-            #     context = {
-            #         'post': post,
-            #         'form': form,
-            #         'error_message': 'Image file must be PNG, JPG, or JPEG',
-            #     }
-            #     return render(request, 'whayp/create_post.html', context)
-            post.save()
-            return render(request, 'whayp/detail.html', {'post': post})
-        context = {
+            file_list = request.FILES.getlist("myfiles")
+            if form.is_valid():
+                for tmp in filter(lambda w: w.name.split('.')[-1] not in IMAGE_FILE_TYPES, file_list):
+                    return render(request, 'whayp/create_post.html', {
+                        'post': post,
+                        'form': form,
+                        'error_message': 'Image file must be PNG, JPG, or JPEG',
+                    })
+                post.user = request.user
+                post.save()
+                for count, file in enumerate(file_list):
+                    file_name = str(uuid.uuid4())
+                    photo = Photo()
+                    photo.post = post
+                    file.name = file_name + EXT
+                    photo.photo_file = file
+                    photo.save()
+                return render(request, 'whayp/detail.html', {'post': post})
+            else:
+                return render(request, 'whayp/create_post.html', {
+                    "form": form,
+                    'error_message': 'Add image, please',
+                })
+        return render(request, 'whayp/create_post.html', {
             "form": form,
-        }
-        return render(request, 'whayp/create_post.html', context)
+        })
+
+
+def process(file, file_path):
+    with open(file_path, 'wb+') as destination:
+        for chunk in file.chunks():
+            destination.write(chunk)
 
 
 def delete_post(request, post_id):
@@ -66,6 +86,9 @@ def favorite_post(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     try:
         post.is_favorite = not post.is_favorite
+        for ph in post.photo_set.all():
+            ph.is_favorite = True
+            ph.save()
         post.save()
     except (KeyError, Post.DoesNotExist):
         return JsonResponse({'success': False})

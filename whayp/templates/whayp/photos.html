@@ -8,8 +8,16 @@
     <div class="row">
         <div class="col-sm-12">
             <ul class="nav nav-pills" style="margin-bottom: 10px;">
-                <li role="presentation" {% if filter_by == 'all' %}class="active"{% endif %}><a href="{% url 'whayp:photos' 'all' %}">View All</a></li>
-                <li role="presentation" {% if filter_by == 'favorites' %}class="active"{% endif %}><a href="{% url 'whayp:photos' 'favorites' %}">Favorites</a></li>
+                <li role="presentation"
+                    {% if filter_by == 'all' %}
+                        class="active"
+                {% endif %}>
+                <a href="{% url 'whayp:photos' 'all' %}">View All</a></li>
+                <li role="presentation"
+                    {% if filter_by == 'favorites' %}
+                class="active"
+                {% endif %}>
+                <a href="{% url 'whayp:photos' 'favorites' %}">Favorites</a></li>
             </ul>
         </div>
     </div>
@@ -20,41 +28,9 @@
 
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Photo Title</th>
-                                <th>Artist</th>
-                                <th>Audio File</th>
-                                <th>Post</th>
-                                <th>Favorite</th>
-                            </tr>
-                        </thead>
-                        <tbody>
                             {% for photo in photo_list %}
-                                <tr>
-                                    <td>{{ photo.photo_title }}</td>
-                                    <td>{{ photo.post.artist }}</td>
-                                    <td>
-                                        <a target="_blank" href="{{ photo.audio_file.url }}">
-                                            <button type="button" class="btn btn-success btn-xs">
-                                                <span class="glyphicon glyphicon-play"></span>&nbsp; Play
-                                            </button>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <a href="{% url 'whayp:detail' photo.post.id %}">
-                                            <img src="{{ photo.post.post_logo.url }}" class="img-responsive" style="width: 20px; float: left; margin-right: 10px;" />
-                                        </a>
-                                        <a href="{% url 'whayp:detail' photo.post.id %}">{{ photo.post.post_title }}</a>
-                                    </td>
-                                    <td>
-                                        <a href="{% url 'whayp:favorite' photo.id %}" class="btn-favorite"><span class="glyphicon glyphicon-star {% if photo.is_favorite %}active{% endif %}"></span></a>
-                                    </td>
-                                </tr>
+                                <img src="{{photo.photo_file.url}}"  style="width:300px;height:200px;">
                             {% endfor %}
-                        </tbody>
-                    </table>
                 </div>
             </div>
 
