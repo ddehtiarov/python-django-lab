@@ -11,9 +11,9 @@
             <h3>{{ user.username }}'s Posts</h3>
         </div>
         {% if posts %}
-        {% for post in posts %}
+        {% for post in posts %}<div class="col-sm-4 col-lg-4"></div>
         <div class="col-sm-4 col-lg-2">
-            <div class="thumbnail">
+            <div class="">
                 <a href="{% url 'whayp:detail' post.id %}">
                     <h2>{{ post.description }}</h2>
                 </a>
@@ -21,7 +21,7 @@
                     {{ post.pub_date }}<br>
 
                     <img id="sda" src="{{MEDIA_URL}}{{post.photo_set.all.0.photo_file.url}}"
-                         style="width:300px;height:200px;">
+                         style="width:600px;height:400px;">
 
                     <form action="{% url 'whayp:delete_post' post.id %}" method="post" style="display: inline;">
                         {% csrf_token %}
@@ -37,8 +37,8 @@
                     </a>
 
                 </div>
-            </div>
-        </div>
+        </div>        </div>
+
         <div class="clearfix visible-lg"></div>
         {% endfor %}
         {% else %}
@@ -89,7 +89,7 @@
                                     <img src="{{ photo.post.post_logo.url }}" class="img-responsive"
                                          style="width: 20px; float: left; margin-right: 10px;"/>
                                 </a>
-                                <a href="{% url 'whayp:detail' photo.post.id %}">{{ photo.post.post_title }}</a>
+                                <a href="{% url 'whayp:detail' photo.post.id %}">{{ photo.post.description }}</a>
                             </td>
                             <td>
                                 <a href="{% url 'whayp:favorite' photo.id %}" class="btn-favorite"><span

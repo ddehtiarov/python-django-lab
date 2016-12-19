@@ -100,16 +100,15 @@ def index(request):
     if not request.user.is_authenticated():
         return render(request, 'whayp/login.html')
     else:
-        posts = Post.objects.filter(user=request.user)
+        posts = Post.objects.all()
         photo_results = Photo.objects.all()
         query = request.GET.get("q")
         if query:
             posts = posts.filter(
-                Q(post_title__icontains=query) |
-                Q(artist__icontains=query)
+                Q(description__icontains=query)
             ).distinct()
             photo_results = photo_results.filter(
-                Q(photo_title__icontains=query)
+
             ).distinct()
             return render(request, 'whayp/index.html', {
                 'posts': posts,
@@ -117,6 +116,22 @@ def index(request):
             })
         else:
             return render(request, 'whayp/index.html', {'posts': posts})
+
+
+def profile(request):
+    if not request.user.is_authenticated():
+        return render(request, 'whayp/login.html')
+    else:
+        posts = Post.objects.filter(user=request.user)
+        photo_results = Photo.objects.all()
+
+        photo_results = photo_results.filter(
+
+        ).distinct()
+        return render(request, 'whayp/index.html', {
+            'posts': posts,
+            'photos': photo_results,
+        })
 
 
 def logout_user(request):
