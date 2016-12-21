@@ -20,9 +20,10 @@ def create_post(request):
     else:
         form = PostForm(request.POST)
         if request.POST:
-            post = form.save(commit=False)
+
             file_list = request.FILES.getlist("myfiles")
             if form.is_valid():
+                post = form.save(commit=False)
                 for tmp in filter(lambda w: w.name.split('.')[-1] not in IMAGE_FILE_TYPES, file_list):
                     return render(request, 'whayp/create_post.html', {
                         'post': post,

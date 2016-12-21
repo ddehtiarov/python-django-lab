@@ -1,23 +1,13 @@
 from datetime import datetime
+
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-
-
-# class Profile(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.CASCADE)
+# from primate.models import UserBase, UserMeta
 #
 #
-# @receiver(post_save, sender=User)
-# def create_user_profile(sender, instance, created, **kwargs):
-#     if created:
-#         Profile.objects.create(user=instance)
-#
-#
-# @receiver(post_save, sender=User)
-# def save_user_profile(sender, instance, **kwargs):
-#     instance.profile.save()
+# class User(UserBase):
+#     __metaclass__ = UserMeta
+#     registration_date = models.DateField()
 
 
 class Post(models.Model):
@@ -32,6 +22,6 @@ class Post(models.Model):
 
 class Photo(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    photo_file = models.FileField()
+    photo_file = models.ImageField()
     is_favorite = models.BooleanField(default=False)
     is_main = models.BooleanField(default=False)
