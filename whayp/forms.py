@@ -9,6 +9,8 @@ MAX_PHOTOS = 10
 
 
 class PostForm(forms.ModelForm):
+    description = forms.CharField(widget=forms.Textarea, required=False, label='Comment')
+
     class Meta:
         model = Post
         fields = ['description']

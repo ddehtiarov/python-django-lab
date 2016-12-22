@@ -1,13 +1,3 @@
-/*
- * knockout-file-bindings
- * Copyright 2014 Muhammad Safraz Razik
- * All Rights Reserved.
- * Use, reproduction, distribution, and modification of this code is subject to the terms and
- * conditions of the MIT license, available at http://www.opensource.org/licenses/mit-license.php
- *
- * Author: Muhammad Safraz Razik
- * Project: https://github.com/adrotec/knockout-file-bindings
- */
 (function (factory) {
     // Module systems magic dance.
 
@@ -27,6 +17,7 @@
         customFileInputSystemOptions: {
             wrapperClass: 'custom-file-input-wrapper',
             fileNameClass: 'custom-file-input-file-name',
+            labelNameClass: 'drag-label',
             buttonGroupClass: 'custom-file-input-button-group',
             buttonClass: 'custom-file-input-button',
             clearButtonClass: 'custom-file-input-clear-button',
@@ -47,6 +38,7 @@
             onClear: function(fileData, options) {
                 if (typeof fileData.clear === 'function') {
                     fileData.clear();
+//                    drag-label
                 }
             }
         },
@@ -339,11 +331,16 @@
             buttonText.innerText = ko.utils.unwrapObservable(file ? options.changeButtonText : options.buttonText);
             if(options.fileName){
                 var fileNameInput = wrapper.querySelector('.' + sysOpts.fileNameClass);
+                var dragLabelValue = document.getElementsByClassName(sysOpts.labelNameClass);
                 addCssClass(fileNameInput, ko.utils.unwrapObservable(options.fileNameClass));
 
                 if (file && file.name) {
+                    if(fileData.fileArray().length == 1){
+                        dragLabelValue.value  = '1 file';
+                    }
                     if(fileData.fileArray().length > 2){
                         fileNameInput.value = fileData.fileArray().length + ' files';
+                        dragLabelValue.innerHTML  = fileData.fileArray().length + ' files';
                     }
                     else {
                         fileNameInput.value = fileData.fileArray().map(function(f){ return f.name }).join(', ');
