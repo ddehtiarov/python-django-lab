@@ -11,7 +11,7 @@
                 <div class="panel-body">
                     <h3>Register for an Account</h3>
                     {% if error_message %}
-                        <p><strong>{{ error_message }}</strong></p>
+                    <p><strong>{{ error_message }}</strong></p>
                     {% endif %}
                     <form class="form-horizontal" role="form" action="" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
@@ -25,6 +25,8 @@
                 </div>
                 <div class="panel-footer">
                     Already have an account? <a href="{% url 'whayp:login_user' %}">Click here</a> to log in.
+                    <hr>
+                    <a href="{% url 'social:begin' 'facebook' %}">Login with Facebook</a>
                 </div>
             </div>
         </div>

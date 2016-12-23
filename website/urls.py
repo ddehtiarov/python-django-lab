@@ -6,6 +6,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include('whayp.urls')),
+    url(r'^oauth/', include('social.apps.django_app.urls', namespace='social')),
 ]
 
 if settings.DEBUG:
